@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riya — Build Log</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #efe6d8;
+    --bg-raised: #faf4ea;
+    --bg-raised-hover: #fffbf4;
+    --rule: #d9c9b2;
+    --rule-soft: #e3d5c0;
+    --text: #3c2f22;
+    --text-dim: #7a6750;
+    --text-faint: #a3907a;
+    --accent: #a85c2a;
+    --accent-soft: rgba(168, 92, 42, 0.14);
+    --teal: #6f7d53;
+  }
+
+  * { box-sizing: border-box; min-width: 0; }
+  html, body { overflow-x: hidden; }
+
+  body {
+    margin: 0;
+    background:
+      linear-gradient(var(--bg) 0%, var(--bg) 100%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, var(--rule-soft) 39px, var(--rule-soft) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, var(--rule-soft) 39px, var(--rule-soft) 40px);
+    background-blend-mode: normal;
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    line-height: 1.65;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    max-width: 1140px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    padding: 56px 36px;
+    border-right: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+  }
+
+  .avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #c47d3f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #faf4ea;
+    margin-bottom: 20px;
+  }
+
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--teal);
+    background: rgba(111, 125, 83, 0.12);
+    border: 1px solid rgba(111, 125, 83, 0.3);
+    padding: 5px 10px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(111,125,83,0.5); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(111,125,83,0); }
+  }
+
+  .sidebar h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .sidebar .role {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 36px;
+  }
+
+  nav ul { list-style: none; padding: 0; margin: 0 0 44px; }
+  nav li { margin-bottom: 4px; }
+  nav a {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+  nav a::before {
+    content: '';
+    width: 14px;
+    height: 1px;
+    background: var(--text-faint);
+    transition: width 0.15s ease, background 0.15s ease;
+  }
+  nav a:hover { color: var(--accent); text-decoration: none; transform: translateX(2px); }
+  nav a:hover::before { width: 22px; background: var(--accent); }
+
+  .stat-strip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+  }
+  .stat-strip div { display: flex; justify-content: space-between; margin-bottom: 9px; }
+  .stat-strip span:last-child { color: var(--accent); }
+
+  main { padding: 72px 52px 100px; }
+
+  .hero {
+    margin-bottom: 80px;
+  }
+  .hero .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    line-height: 1.3;
+    max-width: 18ch;
+    margin: 0;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+
+  section { margin-bottom: 76px; }
+  section:last-child { margin-bottom: 0; }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .about p { max-width: 64ch; font-size: 1.05rem; color: var(--text-dim); }
+  .about p strong { color: var(--text); font-weight: 500; }
+
+  .project {
+    position: relative;
+    border: 1px solid var(--rule);
+    background: var(--bg-raised);
+    border-radius: 8px;
+    padding: 22px 24px 22px 60px;
+    margin-bottom: 14px;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+  .project:hover {
+    border-color: var(--accent-soft);
+    background: var(--bg-raised-hover);
+    transform: translateX(3px);
+  }
+  .project-index {
+    position: absolute;
+    left: 20px;
+    top: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-faint);
+  }
+  .project-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .project-head a { font-size: 1.05rem; font-weight: 500; font-family: 'Fraunces', serif; }
+  .project-stat {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.76rem;
+    color: var(--teal);
+    white-space: nowrap;
+  }
+  .project p { margin: 9px 0 0; color: var(--text-dim); font-size: 0.95rem; }
+
+  .skills-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .skill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.83rem;
+    border: 1px solid var(--rule);
+    background: var(--bg-raised);
+    padding: 7px 13px;
+    border-radius: 5px;
+    color: var(--text-dim);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .skill:hover { color: var(--accent); border-color: var(--accent-soft); }
+
+  .contact-row { margin-bottom: 18px; display: flex; align-items: baseline; gap: 14px; }
+  .contact .label {
+    color: var(--text-faint);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    width: 64px;
+    flex-shrink: 0;
+  }
+  .contact a { font-size: 1.02rem; }
+
+  footer {
+    margin-top: 90px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.74rem;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--rule); padding: 40px 24px; }
+    main { padding: 56px 24px 80px; }
+    .hero { margin-bottom: 56px; }
+    section { margin-bottom: 56px; }
+    .project { padding-left: 50px; }
+  }
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="avatar">R</div>
+      <div class="status-chip"><span class="status-dot"></span>exploring AI/ML</div>
+      <h1>Riya</h1>
+      <p class="role">3rd Sem B.Tech CSE<br>REVA University</p>
+      <nav>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="stat-strip">
+        <div><span>problems solved</span><span>13</span></div>
+        <div><span>repos pushed</span><span>3+</span></div>
+        <div><span>languages</span><span>C / C++ / Py</span></div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="hero">
+        <div class="eyebrow">build log — 2026</div>
+        <h2>Learning computer science by actually shipping things, not just studying them.</h2>
+      </div>
+
+      <section id="about" class="about">
+        <div class="section-label"><span>01 — about</span></div>
+        <p>
+          I'm a <strong>3rd semester CS student</strong> at REVA University, learning by building rather than
+          just by coursework — a few algorithmic practice repos and a machine learning
+          mini-project from a virtual internship. I'm genuinely interested in going deeper into
+          <strong>AI/ML</strong>, and I'm treating that internship as a first step rather than a one-off project.
+        </p>
+      </section>
+
+      <section id="projects">
+        <div class="section-label"><span>02 — projects</span></div>
+
+        <div class="project">
+          <span class="project-index">01</span>
+          <div class="project-head">
+            <a href="https://github.com/Riya-shelke/hello-world" target="_blank" rel="noopener">hello-world</a>
+            <span class="project-stat">C · C++ · Java · Python</span>
+          </div>
+          <p>My first GitHub repository — Hello World written in four languages to start learning Git basics.</p>
+        </div>
+
+        <div class="project">
+          <span class="project-index">02</span>
+          <div class="project-head">
+            <a href="https://github.com/Riya-shelke/leetcode-solutions" target="_blank" rel="noopener">leetcode-solutions</a>
+            <span class="project-stat">8 problems · C++ · tested</span>
+          </div>
+          <p>Arrays & strings, basic algorithms, and stacks — each solution has local tests, a written approach, and an Accepted screenshot.</p>
+        </div>
+
+        <div class="project">
+          <span class="project-index">03</span>
+          <div class="project-head">
+            <a href="https://github.com/Riya-shelke/HackerRank-3rdSem-Portfolio" target="_blank" rel="noopener">HackerRank-3rdSem-Portfolio</a>
+            <span class="project-stat">5 problems · C · tested</span>
+          </div>
+          <p>Diagonal Difference, Dynamic Array, Time Conversion, Compare the Triplets, Sparse Arrays — same tested, documented approach.</p>
+        </div>
+      </section>
+
+      <section id="skills">
+        <div class="section-label"><span>03 — skills</span></div>
+        <div class="skills-row">
+          <span class="skill">C</span>
+          <span class="skill">C++</span>
+          <span class="skill">Python</span>
+          <span class="skill">Java (basics)</span>
+          <span class="skill">Data Structures & Algorithms</span>
+          <span class="skill">Git / GitHub</span>
+          <span class="skill">VS Code</span>
+          <span class="skill">scikit-learn (basics)</span>
+          <span class="skill">HTML / CSS</span>
+        </div>
+      </section>
+
+      <section id="contact" class="contact">
+        <div class="section-label"><span>04 — contact</span></div>
+        <div class="contact-row">
+          <span class="label">GITHUB</span>
+          <a href="https://github.com/Riya-shelke" target="_blank" rel="noopener">github.com/Riya-shelke</a>
+        </div>
+        <div class="contact-row">
+          <span class="label">EMAIL</span>
+          <a href="mailto:riyashelke2008@gmail.com">riyashelke2008@gmail.com</a>
+        </div>
+        <div class="contact-row">
+          <span class="label">LINKEDIN</span>
+          <a href="https://www.linkedin.com/in/riya-r-87240438b" target="_blank" rel="noopener">linkedin.com/in/riya-r-87240438b</a>
+        </div>
+      </section>
+
+      <footer>built with care, one commit at a time.</footer>
+    </main>
+  </div>
+</body>
+</html>
